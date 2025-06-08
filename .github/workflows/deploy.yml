@@ -47,8 +47,8 @@ jobs:
         uses: actions/deploy-pages@v4
 
 
-  notify:
-    runs-on: ubuntu-latest
-    needs: deploy_stage
-    if: ${{ always() }}
+  # notify:
+  #   runs-on: ubuntu-latest
+  #   needs: deploy_stage
+  #   if: ${{ always() }}
     
