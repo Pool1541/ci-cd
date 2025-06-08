@@ -1,0 +1,54 @@
+name: ci-cd
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_stage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+      
+      - name: run tests
+        run: npm test
+      
+      - name: Build page
+        run: npm run build
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public/
+    
+  deploy_stage:
+    runs-on: ubuntu-latest
+    needs: build_stage
+    permissions:
+      pages: write
+      id-token: write
+    environment: 
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }} 
+
+    steps:
+      - name: Deploy to github pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: deploy_stage
+    if: ${{ always() }}
+    
